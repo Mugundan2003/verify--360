@@ -1,8 +1,3 @@
-# ================================================================
-#  VERIFY360 — Python Flask Backend
-#  SQLite database + Admin Panel + Scan API
-# ================================================================
-
 from flask import (Flask, request, jsonify, render_template,
                    redirect, url_for, session, flash)
 from flask_cors import CORS
@@ -17,17 +12,8 @@ CORS(app, supports_credentials=True)
 
 DB_PATH = os.path.join(os.path.dirname(__file__), "verify360.db")
 
-# ================================================================
-#  ⚙️  ADMIN CREDENTIALS — CHANGE THESE BEFORE SHARING THE PROJECT
-#  Only the person with these credentials can access /admin
-# ================================================================
 ADMIN_USERNAME = "admin"          # ← change this to your username
 ADMIN_PASSWORD = "verify360" # ← change this to your password
-
-
-# ================================================================
-#  DATABASE
-# ================================================================
 
 def get_db():
     """Open a database connection (creates file if not exists)."""
@@ -81,11 +67,6 @@ def init_db():
         """)
     print("✅ Database initialised:", DB_PATH)
 
-
-# ================================================================
-#  ADMIN AUTH — decorator + login/logout
-# ================================================================
-
 def admin_required(f):
     """
     Decorator that protects any route so only the admin
@@ -131,11 +112,6 @@ def admin_logout():
     session.pop("is_admin", None)
     session.pop("admin_username", None)
     return redirect("/admin/login")
-
-
-# ================================================================
-#  DETECTION ENGINE
-# ================================================================
 
 SCAM_KEYWORDS = [
     "lottery","lotto","winner","prize","jackpot","free money",
@@ -321,9 +297,7 @@ DETECTORS = {
 }
 
 
-# ================================================================
 #  PUBLIC API ROUTES
-# ================================================================
 
 @app.route("/api/scan", methods=["POST"])
 def api_scan():
@@ -426,9 +400,7 @@ def api_stats():
     })
 
 
-# ================================================================
 #  USER AUTH — login, register, logout
-# ================================================================
 
 @app.route("/api/auth/status")
 def auth_status():
@@ -516,20 +488,13 @@ def _safe_redirect(url):
         return url
     return "/"
 
-
-# ================================================================
 #  HOME PAGE
-# ================================================================
 
 @app.route("/")
 def home():
     return render_template("index.html")
 
-
-# ================================================================
 #  ADMIN PANEL — every route protected by @admin_required
-# ================================================================
-
 @app.route("/admin")
 @admin_required
 def admin():
@@ -644,9 +609,6 @@ def admin_clear_type():
     return redirect(url_for("admin"))
 
 
-# ================================================================
-#  ENTRY POINT
-# ================================================================
 if __name__ == "__main__":
     init_db()
     print("\n🔒 VERIFY360 Flask Backend")
